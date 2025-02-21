@@ -3,7 +3,6 @@ import React from 'react'
 import { signOut } from 'firebase/auth'
 import { auth } from '../../config/firebaseconfig'
 import { useRouter } from 'expo-router'
-
 const Profile = () => {
      const router = useRouter();
     const Logout = () =>{

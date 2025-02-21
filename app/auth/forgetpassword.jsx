@@ -40,6 +40,7 @@ const ForgetPassword = () => {
                 router.replace('/auth/signIn');
                 setLoading(false);
             })
+    
             .catch((error) => {
                 const errorCode = error.code;
                 const errorMessage = error.message;
