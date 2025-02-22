@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, Image, StyleSheet } from 'react-native'
+import { View, Text, TouchableOpacity, Image, StyleSheet, ImageBackground } from 'react-native'
 import React, { useState } from 'react'
 import { signOut } from 'firebase/auth'
 import { auth } from '../../config/firebaseconfig'
@@ -12,10 +12,22 @@ import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import Fontisto from '@expo/vector-icons/Fontisto';
+// import { ImageBackground } from 'react-native-web'
 // import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 
 // const [imageData,setImageData] = useState(null);
 const Profile = () => {
+
+  const changepassword = () => {
+    // firebase.sendPasswordResetEmail(email)
+    // .then(() => {
+    //   alert("Password rest email sent")
+
+    // }).catch((error) => {
+    //   alert(error)
+    // })
+    router.push("/auth/forgetpassword")
+  }
   const router = useRouter();
   const Logout = () => {
     signOut(auth).then(() => {
@@ -28,13 +40,16 @@ const Profile = () => {
   return (
     <View style={styles.main}>
       <View style={styles.profileimgcontmain}>
-        <View style={styles.profileimgcont}>
+        <ImageBackground source={require('../../assets/images/profilebg1.png')} style={styles.bg}>
+          <View style={styles.profileimgcont}>
+            {/* <View style={styles.circleborder}></View> */}
+            <View style={styles.profileimgin} >
+              <Image style={styles.profileimg} resizeMode="contain" source={require('../../assets/images/Avatar/man.png')} />
+            </View>
 
-          <View style={styles.profileimg} ><Image style={styles.profileimg} resizeMode="contain" source={require('../../assets/images/Avatar/man3.png')} />
+            <TouchableOpacity activeOpacity={0.5} style={styles.profileimgcam}><FontAwesome name="pencil-square-o" size={21} color={colors.cwhite} /></ TouchableOpacity>
           </View>
-
-          <TouchableOpacity activeOpacity={0.5} style={styles.profileimgcam}><FontAwesome name="pencil-square-o" size={21} color={colors.cwhite} /></ TouchableOpacity>
-        </View>
+        </ImageBackground>
       </View>
 
       <View style={styles.body}>
@@ -45,36 +60,36 @@ const Profile = () => {
               <Text style={styles.logouttext}>User Name</Text>
             </View>
             <TouchableOpacity activeOpacity={0.5} style={styles.nexticon}>
-            <MaterialIcons name="edit" size={24} color="black" />
+              <MaterialIcons name="edit" size={24} color="black" />
             </TouchableOpacity >
           </View>
         </View>
         <View style={styles.profilecont} >
           <View style={styles.pcont} >
             <View style={styles.icontext}>
-            <Fontisto name="email" size={24} color="black" />
+              <Fontisto name="email" size={24} color="black" />
               <Text style={styles.logouttext}>Email Id</Text>
             </View>
             <TouchableOpacity activeOpacity={0.5} style={styles.nexticon}>
-            <MaterialIcons name="edit" size={24} color="black" />
+              <MaterialIcons name="edit" size={24} color="black" />
             </TouchableOpacity >
           </View>
         </View>
         <View style={styles.profilecont} >
           <View style={styles.pcont} >
             <View style={styles.icontext}>
-            <FontAwesome6 name="lock" size={24} color="black" />
+              <FontAwesome6 name="lock" size={24} color="black" />
               <Text style={styles.logouttext}>Change Password</Text>
             </View>
-            <TouchableOpacity activeOpacity={0.5} style={styles.nexticon}>
-            <MaterialIcons name="edit" size={24} color="black" />
+            <TouchableOpacity onPress={changepassword} activeOpacity={0.5} style={styles.nexticon}>
+              <MaterialIcons name="edit" size={24} color="black" />
             </TouchableOpacity >
           </View>
         </View>
         <View style={styles.profilecont} >
           <View style={styles.pcont} >
             <View style={styles.icontext}>
-            <FontAwesome5 name="list" size={24} color="black" />
+              <FontAwesome5 name="list" size={24} color="black" />
               <Text style={styles.logouttext}>My List</Text>
             </View>
             <TouchableOpacity activeOpacity={0.5} style={styles.nexticon}>
@@ -85,11 +100,11 @@ const Profile = () => {
         <View style={styles.profilecont} >
           <View style={styles.pcont} >
             <View style={styles.icontext}>
-            <MaterialIcons name="favorite-border" size={24} color="black" />
+              <MaterialIcons name="favorite-border" size={24} color="black" />
               <Text style={styles.logouttext}>Favourite</Text>
             </View>
             <TouchableOpacity activeOpacity={0.5} style={styles.nexticon}>
-            <AntDesign name="rightcircle" size={24} color="black" />
+              <AntDesign name="rightcircle" size={24} color="black" />
             </TouchableOpacity >
           </View>
         </View>
@@ -98,7 +113,7 @@ const Profile = () => {
         <View style={styles.profilecont} > <TouchableOpacity style={styles.pcont} ><Text style={styles.logouttext}>Favourite</Text></TouchableOpacity></View> */}
       </View>
       <View style={styles.footer}>
-        <View style={styles.logoutcontmain} > <TouchableOpacity style={styles.logoutcont} onPress={Logout}><Text style={styles.logouttext}>Logout</Text></TouchableOpacity></View>
+        <View style={styles.logoutcontmain} > <TouchableOpacity style={styles.logoutcont} onPress={Logout}><FontAwesome6 name="power-off" size={24} color="red" /></TouchableOpacity></View>
       </View>
     </View>
 
@@ -114,22 +129,22 @@ const styles = StyleSheet.create({
 
     // gap: 10,
     backgroundColor: colors.cwhite,
-    borderTopLeftRadius: moderateScale(35),
-    borderTopRightRadius: moderateScale(35),
+    
     height: moderateScale(310),
     justifyContent: 'space-evenly'
   },
   footer: {
-    height :"100%",
+    height: "100%",
 
     backgroundColor: colors.cwhite,
-    paddingTop : 20,
+    paddingTop: 20,
   },
   profileimgcontmain: {
     width: "100%",
     height: moderateScale(250),
     justifyContent: 'center',
     alignItems: "center",
+    
     // backgroundColor: "red",
 
 
@@ -142,7 +157,11 @@ const styles = StyleSheet.create({
     borderRadius: moderateScale(60),
     backgroundColor: colors.pgreenl,
     justifyContent: 'flex-end',
-    alignItems: "flex-end",
+    alignItems: 'flex-end',
+
+
+
+    // zIndex : 2,
 
 
 
@@ -150,8 +169,11 @@ const styles = StyleSheet.create({
   profileimg: {
     width: moderateScale(120),
     height: moderateScale(120),
+    backgroundColor: colors.pgreenl,
     borderRadius: moderateScale(60),
-    zIndex: 1,
+    zIndex: 2,
+    borderWidth: 3,
+    borderColor: colors.cwhite,
 
 
 
@@ -166,13 +188,21 @@ const styles = StyleSheet.create({
     alignItems: "center",
     zIndex: 2,
     backgroundColor: colors.mblack,
-    borderWidth: 1,
+    borderWidth: 2,
     borderColor: colors.cwhite,
     // marginLeft: 100,
     // marginLeft : 10,
 
 
   },
+  // circleborder:{
+  //   position: 'absolute',
+  //   width: moderateScale(125),
+  //   height: moderateScale(125),
+  //   borderRadius : moderateScale(70),
+  //   backgroundColor : colors.cwhite,
+  //   zIndex : 1,
+  // },
   logoutcontmain: {
     width: "100%",
     justifyContent: "center",
@@ -187,7 +217,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     // backgroundColor : colors.cwhite,
-    
+
 
 
 
@@ -195,11 +225,13 @@ const styles = StyleSheet.create({
   logoutcont: {
     width: moderateScale(220),
     height: moderateScale(50),
-    borderColor: colors.pgreen,
+    borderColor: colors.mblack,
+    // backgroundColor: colors.pgreenl,
+    color: colors.cwhite,
     borderWidth: 2,
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 20,
+    borderRadius: 25,
 
   },
   pcont: {
@@ -212,7 +244,7 @@ const styles = StyleSheet.create({
     borderRadius: 30,
     flexDirection: 'row',
     paddingHorizontal: 15,
-    backgroundColor : colors.cwhite,
+    backgroundColor: colors.cwhite,
 
   },
   logouttext: {
@@ -233,6 +265,13 @@ const styles = StyleSheet.create({
 
 
   },
+  bg: {
+    width: '100%',
+    height: '100%',
+    justifyContent: 'center',
+    alignItems: "center",
+    // borderBottomLeftRadius : moderateScale(50),
+  }
 
 });
 
