@@ -3,5 +3,6 @@ export default{
     fgreen : '#248232',
     mblack : '#2d3a3a',
     pgreen : '#2ba84a',
+    pgreenl : '#99e5ac',
     cwhite : '#fcfffc',
 }

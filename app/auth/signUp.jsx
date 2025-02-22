@@ -196,7 +196,7 @@ const SignUp = () => {
 
               {/* </View> */}
             </View><View style={styles.footer}>
-              <TouchableOpacity disabled={!isValid} activeOpacity={0.8} style={[styles.loginbutton,{ backgroundColor : isValid ? colors.pgreen :'#99e5ac'}]} onPress={createNewAccount}>
+              <TouchableOpacity disabled={!isValid} activeOpacity={0.8} style={[styles.loginbutton,{ backgroundColor : isValid ? colors.pgreen :colors.pgreenl}]} onPress={createNewAccount}>
                 {!loading ? <Text style={styles.loginb}>Get Started</Text> :
                   <ActivityIndicator size={'large'} color={colors.cwhite} />
                   // <Text>Loading..</Text>
