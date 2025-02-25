@@ -1,7 +1,7 @@
 import { useEffect, useContext, useState } from "react";
 import { router, SplashScreen, useRouter } from "expo-router";
-import { Text, TouchableOpacity, View, StyleSheet, Image, ActivityIndicator } from "react-native";
-import { onAuthStateChanged } from "firebase/auth";
+import { Text, TouchableOpacity, View, StyleSheet, Image, ActivityIndicator, ToastAndroid } from "react-native";
+import { onAuthStateChanged , signOut } from "firebase/auth";
 import { auth, db } from "../config/firebaseconfig";
 import { userDetailContext } from "../context/userDetailContext";
 import { doc, getDoc } from "firebase/firestore";
@@ -16,30 +16,130 @@ export default function Index() {
   const { userDetail, setUserDetail } = useContext(userDetailContext);
   const router = useRouter(); // Define the router correctly
   
-  useEffect(() => {
-    setLoading(true)
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      if (user) {
-      
-        console.log(user);
-        try {
-          const result = await getDoc(doc(db, "users", user?.email));
-          if (result.exists()) {
-            setUserDetail(result.data());
-            setLoading(false)
-          }
-        } catch (error) {
-          console.error("Error fetching user details:", error);
-          setLoading(false)
-        }
-        setLoading(false)
-        router.replace("/(tabs)/home"); // Prevent multiple navigations
-      }
-      else setLoading(false)
-    });
+  // useEffect(() => {
+  //   setLoading(true)
+  //   const unsubscribe = onAuthStateChanged(auth, async (user) => {
+  //     if (user) {
+  //       await user.reload();
+  //       if (user.emailVerified){
+  //       console.log(user);
+  //       try {
+  //         const result = await getDoc(doc(db, "users", user?.email));
+  //         if (result.exists()) {
+  //           setUserDetail(result.data());
+  //           setLoading(false)
+  //         }
+  //       } catch (error) {
+  //         console.error("Error fetching user details:", error);
+  //         setLoading(false)
+  //       }
+  //       setLoading(false)
+  //       router.replace("/(tabs)/home"); // Prevent multiple navigations
+  //     }
+  //     else {
+  //       await signOut(auth);  // 🚀 Force sign-out if not verified
+  //       router.replace('/auth/signIn');
+  //     }
+    
+  //   }
+  //     else setLoading(false)
+  //   });
 
-    return () => unsubscribe(); // Cleanup listener on unmount
-  }, []); // Runs only on mount
+  //   return () => unsubscribe(); // Cleanup listener on unmount
+  // }, []); // Runs only on mount
+
+
+
+  // useEffect(() => {
+  //   setLoading(true);
+  //   const unsubscribe = onAuthStateChanged(auth, async (user) => {
+  //     if (!user) {
+  //       setLoading(false);
+  //       router.replace('/auth/signIn'); // 🚀 Redirect if no user is logged in
+  //       return;
+  //     }
+  
+  //     await user.reload(); // 🔄 Refresh user data before checking
+  
+  //     if (!user.emailVerified) {
+  //       ToastAndroid.show('Please verify your email before logging in.', ToastAndroid.LONG);
+  //       await signOut(auth); // 🚀 Force sign-out if email not verified
+  //       router.replace('/auth/signIn'); 
+  //       return;
+  //     }
+  
+  //     // ✅ Fetch user details only for verified users
+  //     try {
+  //       const result = await getDoc(doc(db, "users", user.email));
+  //       if (result.exists()) {
+  //         setUserDetail(result.data());
+  //       }
+  //     } catch (error) {
+  //       console.error("Error fetching user details:", error);
+  //     }
+  
+  //     setLoading(false);
+  //     router.replace("/(tabs)/home"); // ✅ Only verified users go to home
+  //   });
+  
+  //   return () => unsubscribe(); // Cleanup listener
+  // }, []);
+  
+
+
+
+
+
+  useEffect(() => {
+    setLoading(true);
+    
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (!user) {
+        setLoading(false);
+        router.replace('/auth/signIn'); // 🚀 Redirect to sign-in if no user
+        return;
+      }
+  
+      await user.reload(); // 🔄 Refresh user data
+  
+      if (!user.emailVerified) {
+        ToastAndroid.show('Please verify your email before logging in.', ToastAndroid.LONG);
+        await signOut(auth); // 🚀 Sign out if email not verified
+        router.replace('/auth/signIn');
+        return;
+      }
+  
+      // ✅ Ensure Firestore document exists
+      try {
+        const userRef = doc(db, "users", user.email);
+        const result = await getDoc(userRef);
+  
+        if (result.exists()) {
+          setUserDetail(result.data());
+          setLoading(false);
+          router.replace("/(tabs)/home"); // ✅ Navigate only when user data exists
+        } else {
+          console.log("⚠ No user data found in Firestore");
+          ToastAndroid.show("No user data found, please contact support.", ToastAndroid.LONG);
+          setLoading(false);
+          await signOut(auth); // 🚀 Sign out if no Firestore data found
+          router.replace('/auth/signIn');
+        }
+      } catch (error) {
+        console.error("❌ Error fetching user details:", error);
+        setLoading(false);
+        await signOut(auth); // Sign out in case of error
+        router.replace('/auth/signIn');
+      }
+    });
+  
+    return () => unsubscribe();
+  }, []);
+  
+
+
+
+
 
   const onAgree = () => {
     router.push("/onboard1");

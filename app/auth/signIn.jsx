@@ -1,6 +1,6 @@
 import { View, Text,StyleSheet, TouchableOpacity, ToastAndroid, TextInput,Image,ActivityIndicator } from 'react-native';
 import React, { useContext, useState } from 'react';
-import { signInWithEmailAndPassword } from 'firebase/auth';
+import { signInWithEmailAndPassword, signOut } from 'firebase/auth';
 import { auth, db } from '../../config/firebaseconfig';
 import { doc, getDoc } from 'firebase/firestore';
 import { userDetailContext } from '../../context/userDetailContext';
@@ -51,26 +51,82 @@ const SignIn = () => {
     router.push("/auth/forgetpassword")
   }
 
+  // const onSignInClick = async () => {
+  //   setLoading(true)
+  //   try {
+  //     // if()
+  //     const resp = await signInWithEmailAndPassword(auth, email, password);
+  //     const user = resp.user;
+  //     if (!user.emailVerified) {
+  //       ToastAndroid.show('Please verify your email before logging in.', ToastAndroid.LONG);
+  //       await signOut(auth); // Sign out the user if not verified
+  //       return;
+  //     }else{
+  //     console.log(user);
+
+  //     // ✅ Get user details BEFORE navigation
+  //     await getUserDetail(user.email);
+  //     // ✅ Navigate after setting user details
+  //     router.replace('/(tabs)/home');
+  //   }
+  //     setLoading(false);
+  //   } catch (error) {
+  //     setLoading(false);
+     
+  //     console.log(error);
+  //     ToastAndroid.show('Incorrect Email or Password', ToastAndroid.BOTTOM);
+  //   }
+  // };
+
+
   const onSignInClick = async () => {
-    setLoading(true)
+    setLoading(true);
     try {
-
       const resp = await signInWithEmailAndPassword(auth, email, password);
-      const user = resp.user;
-      console.log(user);
-
+      let user = resp.user;
+  
+      // 🔄 Force Firebase to refresh user data
+      await user.reload(); 
+      user = auth.currentUser; // Get the latest user info
+  
+      console.log("Email Verified:", user.emailVerified); // Debugging step
+  
+      if (!user.emailVerified) {
+        ToastAndroid.show('Please verify your email before logging in.', ToastAndroid.LONG);
+        // await signOut(auth); // Sign out the user if not verified
+        await signOut(auth)
+        .then(() => {
+          console.log("User signed out successfully");
+        })
+        .catch((signOutError) => {
+          console.error("Error signing out:", signOutError);
+        });
+        setLoading(false);
+          // ✅ Redirect to Sign-In Page instead of Home
+          router.replace('/auth/signIn');
+        return;
+      }
+  
+      console.log("User is verified:", user.emailVerified);
+  
       // ✅ Get user details BEFORE navigation
       await getUserDetail(user.email);
+      
       // ✅ Navigate after setting user details
       router.replace('/(tabs)/home');
+  
       setLoading(false);
     } catch (error) {
       setLoading(false);
-     
       console.log(error);
       ToastAndroid.show('Incorrect Email or Password', ToastAndroid.BOTTOM);
     }
   };
+  
+
+
+
+  
 
   const getUserDetail = async (userId) => {
     try {

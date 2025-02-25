@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet, TouchableOpacity, TextInput,ActivityIndicator, ToastAndroid  } from 'react-native';
 import React, { useContext, useState } from 'react';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { createUserWithEmailAndPassword , sendEmailVerification ,signOut } from 'firebase/auth';
 import { auth, db } from '../../config/firebaseconfig';
 import { doc, setDoc } from 'firebase/firestore';
 import { userDetailContext } from '../../context/userDetailContext';
@@ -57,23 +57,54 @@ const SignUp = () => {
   const { userDetail, setUserDetail } = useContext(userDetailContext);
 
   // Sign-up function
+  // const createNewAccount = async () => {
+  //   setLoading(true)
+  //   try {
+  //     const resp = await createUserWithEmailAndPassword(auth, email, password);
+  //     const user = resp.user;
+  //     console.log(user);
+
+  //     await saveUser(user);
+  //     setLoading(false);
+  //     router.replace('/(tabs)/home'); // Navigate after saving user
+  //   } catch (error) {
+  //     setLoading(false);
+  //     console.log(error.message);
+  //     alert(error.message);
+  //     ToastAndroid.show('Incorrect Email or Password', ToastAndroid.BOTTOM);
+  //   }
+  // };
+
+
+
   const createNewAccount = async () => {
-    setLoading(true)
+    setLoading(true);
     try {
       const resp = await createUserWithEmailAndPassword(auth, email, password);
       const user = resp.user;
       console.log(user);
-
+  
+      // Send email verification
+      await sendEmailVerification(user);
+      // ToastAndroid.show('Verification email sent. Please verify your email.', ToastAndroid.LONG);
+      alert('Verification email sent. Please verify your email.');
       await saveUser(user);
+      await signOut(auth);
       setLoading(false);
-      router.replace('/(tabs)/home'); // Navigate after saving user
+      
+      // Optionally, navigate to login screen after verification prompt
+      router.replace('/auth/signIn');
     } catch (error) {
       setLoading(false);
       console.log(error.message);
       alert(error.message);
-      ToastAndroid.show('Incorrect Email or Password', ToastAndroid.BOTTOM);
+      ToastAndroid.show('Error creating account. Try again.', ToastAndroid.BOTTOM);
     }
   };
+  
+
+  
+
 
   // Save user to Firestore
   const saveUser = async (user) => {
