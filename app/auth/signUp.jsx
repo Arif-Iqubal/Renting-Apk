@@ -70,6 +70,7 @@ const SignUp = () => {
     } catch (error) {
       setLoading(false);
       console.log(error.message);
+      alert(error.message);
       ToastAndroid.show('Incorrect Email or Password', ToastAndroid.BOTTOM);
     }
   };
