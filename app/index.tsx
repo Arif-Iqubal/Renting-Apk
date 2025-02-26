@@ -96,12 +96,14 @@ export default function Index() {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (!user) {
         setLoading(false);
-        router.replace('/auth/signIn'); // 🚀 Redirect to sign-in if no user
+        console.log("not a user");
+        // router.replace('/auth/signIn'); // 🚀 Redirect to sign-in if no user
+        // router.replace('/index'); // 🚀 Redirect to sign-in if no user
         return;
       }
   
       await user.reload(); // 🔄 Refresh user data
-  
+  console.log(user.email);
       if (!user.emailVerified) {
         ToastAndroid.show('Please verify your email before logging in.', ToastAndroid.LONG);
         await signOut(auth); // 🚀 Sign out if email not verified
@@ -113,8 +115,10 @@ export default function Index() {
       try {
         const userRef = doc(db, "users", user.email);
         const result = await getDoc(userRef);
-  
-        if (result.exists()) {
+        console.log("Checking Firestore for user:", user.email); // Debugging
+        console.log("Checking Firestore for user:", result); // Debugging
+
+        if (!result.exists()) {
           setUserDetail(result.data());
           setLoading(false);
           router.replace("/(tabs)/home"); // ✅ Navigate only when user data exists

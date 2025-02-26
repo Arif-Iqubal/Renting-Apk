@@ -311,7 +311,8 @@ const Profile = () => {
                 >Remove</Text>
               </TouchableOpacity>
             </View>
-            <TouchableOpacity activeOpacity={0.5} onPress={() => setOpenModal(false)}><Text
+            <TouchableOpacity activeOpacity={0.5} onPress={() => setOpenModal(false)}>
+              <Text
               style={{
                 width: moderateScale(80),
                 // height: moderateScale(30),
@@ -335,7 +336,6 @@ const Profile = () => {
       <View style={styles.profileimgcontmain}>
         <ImageBackground source={require('../../assets/images/profilebg1.png')} style={styles.bg}>
           <View style={styles.profileimgcont}>
-            {/* <View style={styles.circleborder}></View> */}
             <View style={styles.profileimgin} >
               <Image style={styles.profileimg} resizeMode="contain" source={image ? { uri: image } : placeholder} />
             </View>
